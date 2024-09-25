@@ -1,0 +1,6 @@
+.envs
+.vscode
+references/*
+data
+
+__pycache__
