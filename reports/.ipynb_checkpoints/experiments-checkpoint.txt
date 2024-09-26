@@ -1,1 +1,13 @@
 # Experiments done:
+
+1. Try different scaler because of regularization
+2. Feature Engineering: 
+    Create BMI
+    Maybe polynomial or 
+    Interactions
+
+3. Log transform age
+4. Feature selection even more
+5. Take all features instead
+6. Use Binning for the highly continous skewed data
+7. 
