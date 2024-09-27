@@ -18,6 +18,7 @@ def create_feature_subplots(df):
     
     # Calculate the total number of features
     total_features = len(numerical_df.columns) + len(categorical_df.columns)
+    print(total_features)
     
     # Calculate the number of rows needed for the subplots (3 columns layout)
     num_rows = int(np.ceil(total_features / 3))
@@ -79,7 +80,7 @@ def create_feature_subplots(df):
     # Update layout for a better look
     fig.update_layout(
         height=300 * num_rows,
-        width=1500,
+        width=1000,
         title_text="Distributions of Features",
         title_x=0.5,  # Center the title
         template='plotly_white'  # Use a clean template
@@ -147,3 +148,84 @@ def compute_mi_classification(X, y):
     # Show the figure
     fig.show()
     return fig
+
+
+from sklearn.preprocessing import LabelEncoder
+from sklearn.feature_selection import mutual_info_regression
+import plotly.graph_objs as go
+
+def compute_mi_regression(X, y):
+    # Encode categorical features
+    X_encoded = X.copy()
+    for col in X_encoded.select_dtypes(include=['object', 'category']).columns:
+        X_encoded[col] = LabelEncoder().fit_transform(X_encoded[col].astype(str))
+    
+    # Compute mutual information scores for regression
+    mi_scores = mutual_info_regression(X_encoded, y)
+    
+    # Create a dictionary with column names and their MI scores
+    mi_dict = dict(zip(X.columns, mi_scores))
+    mi_dict_sorted = dict(sorted(mi_dict.items(), key=lambda item: item[1], reverse=True))
+    
+    # Create a bar chart using Plotly
+    fig = go.Figure(data=[
+        go.Bar(
+            x=list(mi_dict_sorted.keys()),
+            y=list(mi_dict_sorted.values()),
+            marker=dict(color='skyblue'),
+            text=[f"{v:.3f}" for v in mi_dict_sorted.values()],
+            textposition='auto'
+        )
+    ])
+    
+    # Update layout
+    fig.update_layout(
+        title="Mutual Information Scores with target",
+        xaxis_title="Features",
+        yaxis_title="Mutual Information Score",
+        template='plotly_white',
+        height=500
+    )
+    
+    # Show the figure
+    fig.show()
+    return fig
+
+# Example usage:
+# fig = compute_mi_regression(X, y)
+
+
+def create_scatter_plot(data, feature):
+    """
+    Creates a scatter plot for a high cardinality numerical feature to show its distribution.
+
+    Parameters:
+    data (DataFrame): The data containing the feature.
+    feature (str): The name of the high cardinality numerical feature.
+
+    Returns:
+    fig (plotly.graph_objs.Figure): The Plotly figure object.
+    """
+    # Create a scatter plot to show individual points distribution
+    fig = go.Figure(data=[
+        go.Scatter(
+            y=data[feature],
+            mode='markers',
+            marker=dict(color='skyblue', opacity=0.6),
+            text=data.index
+        )
+    ])
+    
+    # Update layout
+    fig.update_layout(
+        title=f"Distribution of {feature} (Scatter Plot)",
+        xaxis_title="Index",
+        yaxis_title=feature,
+        template='plotly_white',
+        height=500
+    )
+    
+    # Show the figure
+    fig.show()
+    return fig
+    pass
