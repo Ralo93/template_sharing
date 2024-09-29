@@ -80,7 +80,7 @@ def create_feature_subplots(df):
     # Update layout for a better look
     fig.update_layout(
         height=300 * num_rows,
-        width=1000,
+        width=1200,
         title_text="Distributions of Features",
         title_x=0.5,  # Center the title
         template='plotly_white'  # Use a clean template
